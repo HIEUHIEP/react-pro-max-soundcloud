@@ -1,20 +1,30 @@
 
 import MainSlider from "@/components/main/main.slider";
 import { Container } from "@mui/material";
+import { sendRequestJS } from "@/utils/old.api";
 
 export default async function HomePage() {
 
-  const res = await fetch("http://localhost:8000/api/v1/tracks/top", {
+  // const res = await fetch("http://localhost:8000/api/v1/tracks/top", {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify({
+  //     category: "CHILL",
+  //     limit: 20
+  //   }),
+  // })
+
+  const res = await sendRequestJS({
+    url: "http://localhost:8000/api/v1/tracks/top",
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
+    body: {
       category: "CHILL",
-      limit: 20
-    }),
+      limit: 1
+    },
   })
-  console.log("check >>", await res.json())
+  console.log("check >>", res)
   return (
     <Container>
       <MainSlider />
