@@ -19,6 +19,8 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -62,6 +64,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function AppHeader() {
+    const router = useRouter()
+
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         React.useState<null | HTMLElement>(null);
@@ -167,6 +171,9 @@ export default function AppHeader() {
             </MenuItem>
         </Menu>
     );
+    const handleRedirectHome = () => {
+        router.push('/');
+    }
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -179,7 +186,11 @@ export default function AppHeader() {
                             variant="h6"
                             noWrap
                             component="div"
-                            sx={{ display: { xs: 'none', sm: 'block' } }}
+                            sx={{
+                                display: { xs: 'none', sm: 'block' },
+                                cursor: "pointer"
+                            }}
+                            onClick={() => handleRedirectHome()}
                         >
                             SoundCloud
                         </Typography>
@@ -203,8 +214,8 @@ export default function AppHeader() {
                                 textDecoration: "unset",
                             }
                         }}>
-                            <Link href="/playlists">Playlists</Link>
-                            <Link href="/likes">Likes</Link>
+                            <Link href="/playlist">Playlists</Link>
+                            <Link href="/like">Likes</Link>
                             <Link href="/upload">Upload</Link>
                             <Avatar
                                 onClick={handleProfileMenuOpen}
