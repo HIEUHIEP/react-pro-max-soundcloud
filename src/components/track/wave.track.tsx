@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { useSearchParams } from 'next/navigation';
 import { useWavesurfer } from "@/utils/customHook";
 import { WaveSurferOptions } from "wavesurfer.js";
+import './wave.scss'
 
 const WaveTrack = () => {
     const searchParams = useSearchParams()
@@ -16,7 +17,7 @@ const WaveTrack = () => {
         const ctx = canvas.getContext('2d')!
 
         // Define the waveform gradient
-        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height * 1.35);
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height * 0.72);
         gradient.addColorStop(0, '#656666') // Top color
         gradient.addColorStop((canvas.height * 0.7) / canvas.height, '#656666') // Top color
         gradient.addColorStop((canvas.height * 0.7 + 1) / canvas.height, '#ffffff') // White line
@@ -33,6 +34,7 @@ const WaveTrack = () => {
         progressGradient.addColorStop((canvas.height * 0.7 + 3) / canvas.height, '#F6B094') // Bottom color
         progressGradient.addColorStop(1, '#F6B094') // Bottom color
 
+
         return {
             // waveColor: 'rgb(200, 0, 200)',
             // progressColor: 'rgb(100, 0, 100)',
@@ -46,6 +48,8 @@ const WaveTrack = () => {
     const wavesurfer = useWavesurfer(containerRef, optionsMemo);
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
+    const timeEl = document.querySelector('#time')!
+    const durationEl = document.querySelector('#duration')!
     // Initialize wavesurfer when the container mounts
     // or any of the props change
     useEffect(() => {
@@ -55,6 +59,8 @@ const WaveTrack = () => {
         const subscriptions = [
             wavesurfer.on('play', () => setIsPlaying(true)),
             wavesurfer.on('pause', () => setIsPlaying(false)),
+            wavesurfer.on('decode', (duration) => (durationEl.textContent = formatTime(duration))),
+            wavesurfer.on('timeupdate', (currentTime) => (timeEl.textContent = formatTime(currentTime)))
         ]
 
         return () => {
@@ -69,11 +75,24 @@ const WaveTrack = () => {
         }
     }, [wavesurfer]);
 
+    // Current time & duration
+
+    const formatTime = (seconds: number) => {
+        const minutes = Math.floor(seconds / 60)
+        const secondsRemainder = Math.round(seconds) % 60
+        const paddedSeconds = `0${secondsRemainder}`.slice(-2)
+        return `${minutes}:${paddedSeconds}`
+    }
+
+
     return (
         <div>
-            <div ref={containerRef}>
+            <div ref={containerRef} className="wave-form-container">
                 wave track
+                <div id="time">0:00</div>
+                <div id="duration">0:00</div>
             </div>
+
             <button onClick={() => onPlayClick()}>
                 {isPlaying === true ? "Pause" : "Play"}
             </button>
