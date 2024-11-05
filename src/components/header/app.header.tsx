@@ -18,10 +18,11 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useSession } from "next-auth/react";
 
-
+//styled-component
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
@@ -58,14 +59,15 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
         width: '100%',
         [theme.breakpoints.up('md')]: {
             // width: '20ch',
-            width: "400px",
+            width: '400px',
         },
     },
 }));
 
 export default function AppHeader() {
-    const router = useRouter()
+    const { data: session } = useSession();
 
+    const router = useRouter();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         React.useState<null | HTMLElement>(null);
@@ -110,11 +112,12 @@ export default function AppHeader() {
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         >
             <MenuItem>
-                <Link href="/profile"
-                    style={{
-                        color: "unset",
-                        textDecoration: "unset"
-                    }}>Profile</Link>
+                <Link href={"/profile"} style={{
+                    color: "unset",
+                    textDecoration: "unset"
+                }}>
+                    Profile
+                </Link>
             </MenuItem>
             <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
         </Menu>
@@ -171,14 +174,18 @@ export default function AppHeader() {
             </MenuItem>
         </Menu>
     );
+
     const handleRedirectHome = () => {
-        router.push('/');
+        router.push("/")
     }
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static"
-                sx={{ backgroundColor: "#354d63" }}
+            <AppBar
+                position="static"
+                sx={{
+                    background: "#4c5c6c"
+                }}
             >
                 <Container>
                     <Toolbar>
@@ -192,7 +199,7 @@ export default function AppHeader() {
                             }}
                             onClick={() => handleRedirectHome()}
                         >
-                            SoundCloud
+                            HoiDanIt SC
                         </Typography>
                         <Search>
                             <SearchIconWrapper>
@@ -209,17 +216,29 @@ export default function AppHeader() {
                             gap: "20px",
                             alignItems: "center",
                             cursor: "pointer",
+
                             "> a": {
                                 color: "unset",
-                                textDecoration: "unset",
+                                textDecoration: "unset"
                             }
                         }}>
-                            <Link href="/playlist">Playlists</Link>
-                            <Link href="/like">Likes</Link>
-                            <Link href="/upload">Upload</Link>
-                            <Avatar
-                                onClick={handleProfileMenuOpen}
-                            >LH</Avatar>
+                            {
+                                session ? //fragment react
+                                    <>
+                                        <Link href={"/playlist"}>Playlists</Link>
+                                        <Link href={"/like"}>Likes</Link>
+                                        <span>Upload</span>
+                                        <Avatar
+                                            onClick={handleProfileMenuOpen}
+                                        >ER</Avatar>
+                                    </>
+                                    :
+                                    <>
+                                        <Link href={"/api/auth/signin"}>Login</Link>
+                                    </>
+                            }
+
+
                         </Box>
                         <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
                             <IconButton
