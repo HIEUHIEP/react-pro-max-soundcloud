@@ -1,6 +1,5 @@
 'use client'
 import { Avatar, Box, Button, Divider, Grid, TextField, Typography } from "@mui/material";
-import { signIn } from "next-auth/react";
 import LockIcon from '@mui/icons-material/Lock';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import GoogleIcon from '@mui/icons-material/Google';
@@ -44,7 +43,6 @@ const AuthSignIn = (props: any) => {
     }
 
     return (
-
         <Box
             sx={{
                 // backgroundImage: "linear-gradient(to bottom, #ff9aef, #fedac1, #d5e1cf, #b7e6d9)",
@@ -59,7 +57,6 @@ const AuthSignIn = (props: any) => {
                     justifyContent: "center",
                     height: "100vh"
                 }}
-
             >
                 <Grid
                     item
