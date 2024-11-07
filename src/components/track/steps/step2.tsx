@@ -10,6 +10,8 @@ import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgres
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
+import axios from 'axios';
+import { useSession } from 'next-auth/react';
 
 function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
     return (
@@ -47,9 +49,47 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-function InputFileUpload() {
+function InputFileUpload(props: any) {
+    const { infor, setInfor } = props;
+    const { data: session } = useSession();
+    const handleUploadImage = async (image: any) => {
+        const formData = new FormData();
+        formData.append('fileUpload', image);
+
+        try {
+            const res = await axios.post("http://localhost:8000/api/v1/files/upload", formData, {
+                headers: {
+                    Authorization: `Bearer ${session?.access_token}`,
+                    'target_type': 'images',
+                    delay: '1000',
+                },
+            })
+            setInfor({
+                ...infor,
+                imgUrl: res.data.data.fileName
+            })
+            // props.setTrackUpload({
+            //     ...props.trackUpload,
+            //     // fileName: acceptedFiles[0].name,
+            //     uploadedTrackName: res.data.data.fileName
+            //     // percent: percentCompleted
+            // });
+        } catch (error) {
+            //@ts-ignore
+            alert(error?.response?.data?.message);
+        }
+    }
+
     return (
         <Button
+            onChange={(e) => {
+                const event = e.target as HTMLInputElement;
+                if (event.files) {
+                    handleUploadImage(event.files[0]);
+                    console.log(">>>", event.files[0]);;
+                }
+
+            }}
             component="label" variant="contained" startIcon={<CloudUploadIcon />}>
             Upload file
             <VisuallyHiddenInput type="file" />
@@ -105,7 +145,34 @@ const Step2 = (props: IProps) => {
             })
         }
     }, [trackUpload])
-    console.log(infor);
+    // console.log(infor);
+    const handleSubmitForm = async () => {
+        // const formData = new FormData();
+        // formData.append('fileUpload', image);
+
+        // try {
+        //     const res = await axios.post("http://localhost:8000/api/v1/files/upload", formData, {
+        //         headers: {
+        //             Authorization: `Bearer ${session?.access_token}`,
+        //             'target_type': 'images',
+        //             delay: '1000',
+        //         },
+        //     })
+        //     setInfor({
+        //         ...infor,
+        //         imgUrl: res.data.data.fileName
+        //     })
+        //     // props.setTrackUpload({
+        //     //     ...props.trackUpload,
+        //     //     // fileName: acceptedFiles[0].name,
+        //     //     uploadedTrackName: res.data.data.fileName
+        //     //     // percent: percentCompleted
+        //     // });
+        // } catch (error) {
+        //     //@ts-ignore
+        //     alert(error?.response?.data?.message);
+        // }
+    }
     return (
         <div>
             <div>
@@ -127,12 +194,15 @@ const Step2 = (props: IProps) => {
                 >
                     <div style={{ height: 250, width: 250, background: "#ccc" }}>
                         <div>
-
+                            {infor.imgUrl ?
+                                <img height={250} width={250} src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${infor.imgUrl}`}></img>
+                                :
+                                <></>}
                         </div>
 
                     </div>
                     <div >
-                        <InputFileUpload />
+                        <InputFileUpload infor={infor} setInfor={setInfor} />
                     </div>
 
                 </Grid>
@@ -180,6 +250,7 @@ const Step2 = (props: IProps) => {
                         ))}
                     </TextField>
                     <Button
+                        onClick={() => handleSubmitForm()}
                         variant="outlined"
                         sx={{
                             mt: 5
