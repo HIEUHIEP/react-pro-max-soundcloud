@@ -12,6 +12,7 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
+import { sendRequest } from '@/utils/api';
 
 function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
     return (
@@ -122,6 +123,8 @@ const Step2 = (props: IProps) => {
         category: "",
     });
     const { trackUpload } = props;
+
+    const { data: session } = useSession();
     const category = [
         {
             value: 'CHILL',
@@ -147,31 +150,27 @@ const Step2 = (props: IProps) => {
     }, [trackUpload])
     // console.log(infor);
     const handleSubmitForm = async () => {
-        // const formData = new FormData();
-        // formData.append('fileUpload', image);
+        const res = await sendRequest<IBackendRes<ITrackTop[]>>({
+            url: "http://localhost:8000/api/v1/tracks",
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${session?.access_token}`,
 
-        // try {
-        //     const res = await axios.post("http://localhost:8000/api/v1/files/upload", formData, {
-        //         headers: {
-        //             Authorization: `Bearer ${session?.access_token}`,
-        //             'target_type': 'images',
-        //             delay: '1000',
-        //         },
-        //     })
-        //     setInfor({
-        //         ...infor,
-        //         imgUrl: res.data.data.fileName
-        //     })
-        //     // props.setTrackUpload({
-        //     //     ...props.trackUpload,
-        //     //     // fileName: acceptedFiles[0].name,
-        //     //     uploadedTrackName: res.data.data.fileName
-        //     //     // percent: percentCompleted
-        //     // });
-        // } catch (error) {
-        //     //@ts-ignore
-        //     alert(error?.response?.data?.message);
-        // }
+            },
+            body: {
+                title: infor.title,
+                description: infor.description,
+                trackUrl: infor.trackUrl,
+                imgUrl: infor.imgUrl,
+                category: infor.category,
+            },
+        })
+        // const d = await res.json();
+        if (res.data) {
+            alert("Create success");
+        } else {
+            alert(res.message);
+        }
     }
     return (
         <div>

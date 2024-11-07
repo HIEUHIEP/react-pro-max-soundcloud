@@ -45,12 +45,12 @@ const Step1 = (props: IProps) => {
                         console.log(percentCompleted);
                     }
                 })
-                props.setTrackUpload({
-                    ...props.trackUpload,
+                props.setTrackUpload((prevState: any) => ({
+                    ...prevState,
                     // fileName: acceptedFiles[0].name,
                     uploadedTrackName: res.data.data.fileName
                     // percent: percentCompleted
-                });
+                }));
             } catch (error) {
                 //@ts-ignore
                 alert(error?.response?.data?.message);
