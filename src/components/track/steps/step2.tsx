@@ -61,10 +61,26 @@ function InputFileUpload() {
 interface IProps {
     trackUpload: {
         fileName: string,
-        percent: number
+        percent: number,
+        uploadedTrackName: string,
     }
 }
+interface INewTrack {
+    title: string,
+    description: string,
+    trackUrl: string,
+    imgUrl: string,
+    category: string,
+}
+
 const Step2 = (props: IProps) => {
+    const [infor, setInfor] = React.useState<INewTrack>({
+        title: "",
+        description: "",
+        trackUrl: "",
+        imgUrl: "",
+        category: "",
+    });
     const { trackUpload } = props;
     const category = [
         {
@@ -81,6 +97,15 @@ const Step2 = (props: IProps) => {
         }
     ];
 
+    React.useEffect(() => {
+        if (trackUpload && trackUpload.uploadedTrackName) {
+            setInfor({
+                ...infor,
+                trackUrl: trackUpload.uploadedTrackName
+            })
+        }
+    }, [trackUpload])
+    console.log(infor);
     return (
         <div>
             <div>
@@ -112,9 +137,32 @@ const Step2 = (props: IProps) => {
 
                 </Grid>
                 <Grid item xs={6} md={8}>
-                    <TextField id="standard-basic" label="Title" variant="standard" fullWidth margin="dense" />
-                    <TextField id="standard-basic" label="Description" variant="standard" fullWidth margin="dense" />
                     <TextField
+                        value={infor?.title}
+                        onChange={(e) => setInfor({
+                            ...infor,
+                            title: e.target.value
+                        })}
+                        label="Title"
+                        variant="standard"
+                        fullWidth
+                        margin="dense" />
+                    <TextField
+                        value={infor?.description}
+                        onChange={(e) => setInfor({
+                            ...infor,
+                            description: e.target.value
+                        })}
+                        label="Description"
+                        variant="standard"
+                        fullWidth
+                        margin="dense" />
+                    <TextField
+                        value={infor?.category}
+                        onChange={(e) => setInfor({
+                            ...infor,
+                            category: e.target.value
+                        })}
                         sx={{
                             mt: 3
                         }}

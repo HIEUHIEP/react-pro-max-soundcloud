@@ -12,6 +12,7 @@ import axios from 'axios';
 interface IProps {
     setValue: (v: number) => void,
     setTrackUpload: any,
+    trackUpload: any,
 }
 const Step1 = (props: IProps) => {
     const [percent, setPercent] = useState(0);
@@ -35,6 +36,7 @@ const Step1 = (props: IProps) => {
                         let percentCompleted = Math.floor((progressEvent.loaded * 100) / progressEvent.total!);
                         setPercent(percentCompleted);
                         props.setTrackUpload({
+                            ...props.trackUpload,
                             fileName: acceptedFiles[0].name,
                             percent: percentCompleted
                         });
@@ -43,6 +45,12 @@ const Step1 = (props: IProps) => {
                         console.log(percentCompleted);
                     }
                 })
+                props.setTrackUpload({
+                    ...props.trackUpload,
+                    // fileName: acceptedFiles[0].name,
+                    uploadedTrackName: res.data.data.fileName
+                    // percent: percentCompleted
+                });
             } catch (error) {
                 //@ts-ignore
                 alert(error?.response?.data?.message);
