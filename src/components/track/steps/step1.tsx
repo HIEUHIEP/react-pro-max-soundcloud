@@ -7,7 +7,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useCallback } from 'react';
 import { sendRequest, sendRequestFile } from '@/utils/api';
 import { useSession } from 'next-auth/react';
-
+import axios from 'axios';
 
 const Step1 = () => {
     const { data: session } = useSession();
@@ -17,15 +17,26 @@ const Step1 = () => {
             const audio = acceptedFiles[0];
             const formData = new FormData();
             formData.append('fileUpload', audio);
-            const chills = await sendRequestFile<IBackendRes<ITrackTop[]>>({
-                url: "http://localhost:8000/api/v1/files/upload",
-                method: "POST",
-                headers: {
-                    'Authorization': `Bearer ${session?.access_token}`,
-                    'target_type': 'tracks',
-                },
-                body: formData,
-            })
+            // const chills = await sendRequestFile<IBackendRes<ITrackTop[]>>({
+            //     url: "http://localhost:8000/api/v1/files/upload",
+            //     method: "POST",
+            //     headers: {
+            //         'Authorization': `Bearer ${session?.access_token}`,
+            //         'target_type': 'tracks',
+            //     },
+            //     body: formData,
+            // })
+            try {
+                const res = await axios.post("http://localhost:8000/api/v1/files/upload", formData, {
+                    headers: {
+                        Authorization: `Bearer ${session?.access_token}`,
+                        'target_type': 'tracks',
+                    }
+                })
+            } catch (error) {
+                //@ts-ignore
+                alert(error?.response?.data?.message);
+            }
 
         }
     }, [session])
