@@ -10,6 +10,8 @@ import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
 import { useTrackContext } from '@/lib/track.wrapper';
+import PauseIcon from '@mui/icons-material/Pause';
+import { useState } from 'react';
 
 interface IProps {
     data: ITrackTop
@@ -17,7 +19,8 @@ interface IProps {
 const ProfileTracks = (props: IProps) => {
     const { data } = props;
     const theme = useTheme();
-    const { setCurrentTrack } = useTrackContext() as ITrackContext;
+    const { currentTrack, setCurrentTrack } = useTrackContext() as ITrackContext;
+    // const [isPlaying, setIsPlaying] = useState(false);
     return (
         <Card sx={{ display: 'flex', justifyContent: "space-between", height: "150px", marginTop: "50px" }}>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -33,10 +36,23 @@ const ProfileTracks = (props: IProps) => {
                     <IconButton aria-label="previous">
                         {theme.direction === 'rtl' ? <SkipNextIcon /> : <SkipPreviousIcon />}
                     </IconButton>
-                    <IconButton aria-label="play/pause"
-                        onClick={() => setCurrentTrack({ ...data, isPlaying: true })}>
-                        <PlayArrowIcon sx={{ height: 38, width: 38 }} />
-                    </IconButton>
+                    {currentTrack._id === data._id && currentTrack.isPlaying ?
+                        <PauseIcon sx={{ height: 38, width: 38 }}
+                            onClick={() => {
+                                setCurrentTrack({ ...currentTrack, isPlaying: false })
+                            }}
+                        />
+                        :
+                        <IconButton aria-label="play/pause"
+                            onClick={() => {
+                                setCurrentTrack({ ...data, isPlaying: true })
+                            }}>
+                            <PlayArrowIcon sx={{ height: 38, width: 38 }} />
+                        </IconButton>
+                    }
+
+
+
                     <IconButton aria-label="next">
                         {theme.direction === 'rtl' ? <SkipPreviousIcon /> : <SkipNextIcon />}
                     </IconButton>
