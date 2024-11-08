@@ -13,6 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { sendRequest } from '@/utils/api';
+import { useToast } from '@/utils/toast';
 
 function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
     return (
@@ -53,6 +54,7 @@ const VisuallyHiddenInput = styled('input')({
 function InputFileUpload(props: any) {
     const { infor, setInfor } = props;
     const { data: session } = useSession();
+    const toast = useToast();
     const handleUploadImage = async (image: any) => {
         const formData = new FormData();
         formData.append('fileUpload', image);
@@ -69,15 +71,10 @@ function InputFileUpload(props: any) {
                 ...infor,
                 imgUrl: res.data.data.fileName
             })
-            // props.setTrackUpload({
-            //     ...props.trackUpload,
-            //     // fileName: acceptedFiles[0].name,
-            //     uploadedTrackName: res.data.data.fileName
-            //     // percent: percentCompleted
-            // });
+
         } catch (error) {
             //@ts-ignore
-            alert(error?.response?.data?.message);
+            toast.error(error?.response?.data?.message)
         }
     }
 
@@ -104,7 +101,8 @@ interface IProps {
         fileName: string,
         percent: number,
         uploadedTrackName: string,
-    }
+    },
+    setValue: (v: number) => void;
 }
 interface INewTrack {
     title: string,
@@ -122,9 +120,10 @@ const Step2 = (props: IProps) => {
         imgUrl: "",
         category: "",
     });
-    const { trackUpload } = props;
+    const { trackUpload, setValue } = props;
 
     const { data: session } = useSession();
+    const toast = useToast();
     const category = [
         {
             value: 'CHILL',
@@ -167,9 +166,11 @@ const Step2 = (props: IProps) => {
         })
         // const d = await res.json();
         if (res.data) {
-            alert("Create success");
+            toast.success("Create success")
+            setValue(0);
         } else {
-            alert(res.message);
+            // alert(res.message);
+            toast.error(res.message)
         }
     }
     return (
@@ -178,7 +179,7 @@ const Step2 = (props: IProps) => {
                 <div>
                     Your uploading track: {trackUpload.fileName}
                 </div>
-                <LinearWithValueLabel trackUpload={trackUpload} />
+                <LinearWithValueLabel trackUpload={trackUpload} setValue={setValue} />
             </div>
 
             <Grid container spacing={2} mt={5}>
