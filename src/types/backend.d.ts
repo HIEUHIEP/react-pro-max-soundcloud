@@ -3,6 +3,24 @@ export { };
 
 declare global {
 
+    interface ITrackComment {
+        "_id": string,
+        "content": string,
+        "moment": number,
+        "user": {
+            "_id": string,
+            "email": string,
+            "name": string,
+            "role": string,
+            "type": string
+        },
+        "track": string,
+        "isDeleted": boolean,
+        "__v": number,
+        "createdAt": string,
+        "updatedAt": string
+    }
+
     interface ITrackTop {
         _id: string;
         title: string;

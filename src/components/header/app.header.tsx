@@ -21,6 +21,7 @@ import Avatar from '@mui/material/Avatar';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession, signIn, signOut } from "next-auth/react";
+import { fetchDefaultImages } from '@/utils/api';
 
 //styled-component
 const Search = styled('div')(({ theme }) => ({
@@ -75,6 +76,8 @@ export default function AppHeader() {
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+
 
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -232,9 +235,10 @@ export default function AppHeader() {
                                         <Link href={"/playlist"}>Playlists</Link>
                                         <Link href={"/like"}>Likes</Link>
                                         <Link href={"/track/upload"}>Upload</Link>
-                                        <Avatar
+                                        <Avatar src={fetchDefaultImages(session.user.type)}
+
                                             onClick={handleProfileMenuOpen}
-                                        >ER</Avatar>
+                                        ></Avatar>
                                     </>
                                     :
                                     <>
