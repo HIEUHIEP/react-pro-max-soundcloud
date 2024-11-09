@@ -8,16 +8,24 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 import './wave.scss';
 import { Tooltip } from "@mui/material";
+import { sendRequest } from "@/utils/api";
+import { TrackContext, useTrackContext } from "@/lib/track.wrapper";
 
-const WaveTrack = () => {
+interface IProps {
+    track: ITrackTop | null
+}
+const WaveTrack = (props: IProps) => {
+    const { track } = props;
     const searchParams = useSearchParams()
     const fileName = searchParams.get('audio');
+    const id = searchParams.get('id');
     const containerRef = useRef<HTMLDivElement>(null);
     const hoverRef = useRef<HTMLDivElement>(null);
 
     const [time, setTime] = useState<string>("0:00");
     const [duration, setDuration] = useState<string>("0:00");
 
+    const { currentTrack, setCurrentTrack } = useTrackContext() as ITrackContext;
 
     const optionsMemo = useMemo((): Omit<WaveSurferOptions, 'container'> => {
         let gradient, progressGradient;
@@ -90,6 +98,20 @@ const WaveTrack = () => {
         }
     }, [wavesurfer]);
 
+    // Get data track on Client side
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         const res = await sendRequest<IBackendRes<ITrackTop>>({
+    //             url: `http://localhost:8000/api/v1/tracks/${id}`,
+    //             method: "GET",
+    //         });
+    //         if (res && res.data) {
+    //             setTrackInfo(res.data)
+    //         }
+    //     }
+    //     fetchData();
+    // }, [id])
+
     const formatTime = (seconds: number) => {
         const minutes = Math.floor(seconds / 60)
         const secondsRemainder = Math.round(seconds) % 60
@@ -126,6 +148,17 @@ const WaveTrack = () => {
         const percent = (moment / hardCodeDuration) * 100;
         return `${percent}%`
     }
+    useEffect(() => {
+        if (wavesurfer && currentTrack.isPlaying) {
+            wavesurfer.pause();
+        }
+    }, [currentTrack])
+
+    useEffect(() => {
+        if (track?._id && !currentTrack._id) {
+            setCurrentTrack({ ...track, isPlaying: false })
+        }
+    }, [track])
 
     return (
         <div style={{ marginTop: 20 }}>
@@ -150,7 +183,11 @@ const WaveTrack = () => {
                     <div className="info" style={{ display: "flex" }}>
                         <div>
                             <div
-                                onClick={() => onPlayClick()}
+                                onClick={() => {
+                                    onPlayClick()
+                                    if (currentTrack && wavesurfer)
+                                        setCurrentTrack({ ...currentTrack, isPlaying: false })
+                                }}
                                 style={{
                                     borderRadius: "50%",
                                     background: "#f50",
@@ -181,7 +218,7 @@ const WaveTrack = () => {
                                 width: "fit-content",
                                 color: "white"
                             }}>
-                                Hỏi Dân IT's song
+                                {track?.title}
                             </div>
                             <div style={{
                                 padding: "0 5px",
@@ -192,7 +229,7 @@ const WaveTrack = () => {
                                 color: "white"
                             }}
                             >
-                                Eric
+                                {track?.description}
                             </div>
                         </div>
                     </div>
@@ -216,7 +253,7 @@ const WaveTrack = () => {
                             {
                                 arrComments.map(item => {
                                     return (
-                                        <Tooltip title={item.content} arrow>
+                                        <Tooltip title={item.content} arrow key={item.id}>
                                             <img
                                                 onPointerMove={(e) => {
                                                     const hover = hoverRef.current!;

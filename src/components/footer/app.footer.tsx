@@ -3,7 +3,7 @@ import { AppBar, Box, Container } from "@mui/material"
 import 'react-h5-audio-player/lib/styles.css';
 import AudioPlayer from 'react-h5-audio-player';
 import { useHasMounted } from "@/utils/customHook";
-import { useContext, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { TrackContext, useTrackContext } from "@/lib/track.wrapper";
 
 
@@ -12,18 +12,20 @@ const AppFooter = () => {
     const playerRef = useRef(null);
     const { currentTrack, setCurrentTrack } = useTrackContext() as ITrackContext;
     // console.log("trackContext: ", currentTrack);
-    if (!hasMounted) return (<></>);
+
     // console.log("check: ", process.env.NEXT_PUBLIC_BACKEND_URL)
+    useEffect(() => {
+        if (currentTrack?.isPlaying === false) {
+            //@ts-ignore
+            playerRef?.current?.audio?.current?.pause();
+        }
+        if (currentTrack?.isPlaying === true) {
+            //@ts-ignore
+            playerRef?.current?.audio?.current?.play();
+        }
+    }, [currentTrack])
 
-    if (playerRef?.current && currentTrack?.isPlaying === false) {
-        //@ts-ignore
-        playerRef?.current?.audio?.current?.pause();
-    }
-    if (playerRef?.current && currentTrack?.isPlaying === true) {
-        //@ts-ignore
-        playerRef?.current?.audio?.current?.play();
-    }
-
+    if (!hasMounted) return (<></>);
 
     return (
         <div style={{ marginBottom: 100 }}>
@@ -52,8 +54,8 @@ const AppFooter = () => {
                     // Try other props!
                     />
                     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "start", justifyContent: "center", minWidth: "100px" }}>
-                        <Box sx={{ color: "#ccc" }}> Arthor </Box>
-                        <Box sx={{ color: "black" }}> Name song </Box>
+                        <Box sx={{ color: "#ccc" }}> {currentTrack.description} </Box>
+                        <Box sx={{ color: "black" }}> {currentTrack.title} </Box>
                     </Box>
                 </Container >
             </AppBar>

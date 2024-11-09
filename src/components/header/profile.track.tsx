@@ -12,6 +12,7 @@ import SkipNextIcon from '@mui/icons-material/SkipNext';
 import { useTrackContext } from '@/lib/track.wrapper';
 import PauseIcon from '@mui/icons-material/Pause';
 import { useState } from 'react';
+import Link from 'next/link';
 
 interface IProps {
     data: ITrackTop
@@ -22,12 +23,20 @@ const ProfileTracks = (props: IProps) => {
     const { currentTrack, setCurrentTrack } = useTrackContext() as ITrackContext;
     // const [isPlaying, setIsPlaying] = useState(false);
     return (
-        <Card sx={{ display: 'flex', justifyContent: "space-between", height: "150px", marginTop: "50px" }}>
+        <Card sx={{ display: 'flex', justifyContent: "space-between", marginTop: "50px" }}>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <CardContent sx={{ flex: '1 0 auto' }}>
-                    <Typography component="div" variant="h5">
-                        {data.title}
-                    </Typography>
+                    <Link href={`/track/${data._id}?audio=${data.trackUrl}&id=${data._id}`}>
+                        <Typography style={{
+                            textDecoration: "none",
+                            color: "unset"
+                        }}
+                            component="div" variant="h5">
+
+                            <h4>{data.title}</h4>
+
+                        </Typography>
+                    </Link>
                     <Typography variant="subtitle1" color="text.secondary" component="div">
                         {data.description}
                     </Typography>
