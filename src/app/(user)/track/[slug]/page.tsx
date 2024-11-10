@@ -4,6 +4,33 @@ import WaveTrack from '@/components/track/wave.track';
 import Container from '@mui/material/Container';
 import { sendRequest } from '@/utils/api';
 
+import type { Metadata, ResolvingMetadata } from 'next'
+
+type Props = {
+    params: Promise<{ slug: string }>
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export async function generateMetadata(
+    { params, searchParams }: Props,
+    parent: ResolvingMetadata
+): Promise<Metadata> {
+    // read route params
+    const slug = (await params).slug
+
+    // fetch data
+    const res = await sendRequest<IBackendRes<ITrackTop>>({
+        url: `http://localhost:8000/api/v1/tracks/${slug}`,
+        method: "GET",
+    });
+    // const product = await fetch(`https://.../${slug}`).then((res) => res.json())
+
+    return {
+        title: res?.data?.title,
+        description: res?.data?.description,
+    }
+}
+
 const DetailTrackPage = async (props: any) => {
     const { params } = props;
     // const searchParams = useSearchParams()
