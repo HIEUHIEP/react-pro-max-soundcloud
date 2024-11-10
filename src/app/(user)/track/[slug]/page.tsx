@@ -28,6 +28,13 @@ export async function generateMetadata(
     return {
         title: res?.data?.title,
         description: res?.data?.description,
+        openGraph: {
+            title: 'Hỏi Dân IT',
+            description: 'Beyond Your Coding Skills',
+            type: 'website',
+            images: [`https://raw.githubusercontent.com/hoidanit/images-hosting/master/eric.png`],
+        },
+
     }
 }
 
@@ -36,7 +43,7 @@ const DetailTrackPage = async (props: any) => {
     // const searchParams = useSearchParams()
     // const search = searchParams.get('audio')
 
-    const resComment = await sendRequest<IBackendRes<IModelPaginate<ITrackComment[]>>>({
+    const resComment = await sendRequest<IBackendRes<IModelPaginate<ITrackComment>>>({
         url: `http://localhost:8000/api/v1/tracks/comments`,
         method: "POST",
         queryParams: {
