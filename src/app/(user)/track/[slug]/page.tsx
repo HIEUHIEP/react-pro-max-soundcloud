@@ -19,9 +19,13 @@ export async function generateMetadata(
     // read route params
     const slug = (await params).slug
 
+    const temp = slug?.split('.html') ?? [];
+    const temp1 = (temp[0]?.split('-') ?? []) as string[];
+    const id = temp1[temp1.length - 1];
+
     // fetch data
     const res = await sendRequest<IBackendRes<ITrackTop>>({
-        url: `http://localhost:8000/api/v1/tracks/${slug}`,
+        url: `http://localhost:8000/api/v1/tracks/${id}`,
         method: "GET",
     });
     // const product = await fetch(`https://.../${slug}`).then((res) => res.json())
@@ -44,19 +48,23 @@ const DetailTrackPage = async (props: any) => {
     // const searchParams = useSearchParams()
     // const search = searchParams.get('audio')
 
+    const temp = params?.slug?.split('.html') ?? [];
+    const temp1 = (temp[0]?.split('-') ?? []) as string[];
+    const id = temp1[temp1.length - 1];
+
     const resComment = await sendRequest<IBackendRes<IModelPaginate<ITrackComment>>>({
         url: `http://localhost:8000/api/v1/tracks/comments`,
         method: "POST",
         queryParams: {
             current: 1,
             pageSize: 100,
-            trackId: params.slug,
+            trackId: id,
             sort: "-createdAt",
         },
     });
 
     const res = await sendRequest<IBackendRes<ITrackTop>>({
-        url: `http://localhost:8000/api/v1/tracks/${params.slug}`,
+        url: `http://localhost:8000/api/v1/tracks/${id}`,
         method: "GET",
         nextOption: { cache: "no-store" }
     });
