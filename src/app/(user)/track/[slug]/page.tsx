@@ -5,6 +5,7 @@ import Container from '@mui/material/Container';
 import { sendRequest } from '@/utils/api';
 
 import type { Metadata, ResolvingMetadata } from 'next'
+import slugify from 'slugify';
 
 type Props = {
     params: Promise<{ slug: string }>
