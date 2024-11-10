@@ -29,7 +29,7 @@ declare global {
         imgUrl: string;
         trackUrl: string;
         countLike: number;
-        countPlay: number921;
+        countPlay: number;
         uploader: {
             _id: string;
             email: string;
@@ -40,6 +40,18 @@ declare global {
         isDeleted: boolean;
         createdAt: string;
         updatedAt: string
+    }
+
+    interface ITrackLike {
+        _id: string;
+        title: string;
+        description: string;
+        category: string;
+        imgUrl: string;
+        trackUrl: string;
+        countLike: number;
+        countPlay: number;
+
     }
 
     interface IRequest {
